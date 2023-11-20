@@ -1,11 +1,46 @@
 const express = require('express');
-//const path = require('path');
-
 const app = express();
 
-app.use(express.static('./public'));
+// const logger = (req, res, next) => {
+//   const method = req.method;
+//   const url = req.url;
+//   const time = new Date().getFullYear();
+//   console.log(method, url, time);
+//   next();
+// };
 
-const { products } = require('./data');
+// app.use(['/', '/about'], logger);
+
+// app.get('/', (req, res) => {
+//   res.send('Home');
+// });
+// app.get('/about', (req, res) => {
+//   res.send('About');
+// });
+
+//app.use(express.static('./methods-public'));
+
+const { products, people } = require('./data');
+const peopleRouter = require('./routes/people');
+
+app.use(express.json());
+
+app.use('/api/v1/people', peopleRouter);
+
+// app.get('/api/v1/people', (req, res) => {
+//   res.json(people);
+// });
+
+// app.post('/api/v1/people', (req, res) => {
+//   const { name } = req.body;
+//   if (!name) {
+//     return res
+//       .status(400)
+//       .json({ success: false, msg: 'please provide name value' });
+//   }
+//   people.push({ id: people.length + 1, name: req.body.name });
+//   res.status(201).json({ success: true, name: req.body.name });
+// });
 
 app.get('/api/v1/test', (req, res) => {
   res.json({ message: 'It worked!' });
@@ -30,13 +65,6 @@ app.get('/api/v1/query', (req, res) => {
   //console.log(req.query);
   const { search, limit } = req.query;
   let sortedProducts = [...products];
-
-  //   if (cost) {
-  //     //const maxPrice = parseInt(req.params.productID);
-  //     sortedProducts = sortedProducts.filter((product) => {
-  //       return product.price < Number(cost);
-  //     });
-  //   }
 
   if (search) {
     sortedProducts = sortedProducts.filter((product) => {
